@@ -17,31 +17,8 @@ Farmer's Financial Shield combines multiple machine learning models to analyze m
 
 The system employs a hierarchical ensemble approach with four complementary models:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    INPUT DATA LAYER                         │
-│  Historical Prices │ Market Trends │ News/Text Data         │
-└────────────┬────────────────┬──────────────┬───────────────┘
-             │                │              │
-       ┌─────▼─────┐   ┌─────▼─────┐  ┌────▼─────┐
-       │   GARCH   │   │   LSTM    │  │   BERT   │
-       │ Volatility│   │   Trend   │  │Sentiment │
-       │  Model    │   │Prediction │  │ Analysis │
-       └─────┬─────┘   └─────┬─────┘  └────┬─────┘
-             │                │              │
-             └────────────────┼──────────────┘
-                              │
-                      ┌───────▼────────┐
-                      │   XGBoost      │
-                      │   Master       │
-                      │  Classifier    │
-                      └───────┬────────┘
-                              │
-                      ┌───────▼────────┐
-                      │ HEDGE or WAIT  │
-                      │  Recommendation│
-                      └────────────────┘
-```
+<img width="2423" height="1246" alt="image" src="https://github.com/user-attachments/assets/6aae7122-c9fb-41fd-9062-5f50a6a64950" />
+
 
 ### Model Components
 
@@ -205,3 +182,4 @@ Each model contributes specific insights:
 - Upward or stable trend
 - Positive market sentiment
 - Limited downside risk identified
+
