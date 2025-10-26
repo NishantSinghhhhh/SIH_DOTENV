@@ -1,33 +1,207 @@
-The files currently contains the learning components for the "Farmer's Financial Shield" concept, an application designed to provide AI-driven hedging recommendations (Hedge/Wait) for Indian oilseed farmers.
+# 🛡️ Farmer's Financial Shield
 
-GARCH Model: Predicts price volatility (garch_volatility.py).
-LSTM Model: Predicts market trend direction (lstm_trend_corrected.py).
-BERT Model: Analyzes sentiment from sample text (bert_sentiment_no_comments.py).
-XGBoost Model: Acts as the master classifier, combining outputs from the above models (simulated) and other features to make the final "Hedge/Wait" prediction (xgboost_classifier_no_comments.py).
+An AI-driven decision support system providing intelligent hedging recommendations for Indian oilseed farmers through advanced machine learning models.
 
-The calculation logic is as follows:
-Logarithmic Return (Log Return): r_t = ln(P_t / P_{t-1}) Where r_t is the log return at time t, P_t is the price at time t, P_{t-1} is the price at the previous time step t-1, and ln is the natural logarithm.
+## 📋 Overview
 
-GARCH(1,1) Variance Forecast: sigma-squared_t = omega + alpha_1 * r-squared_{t-1} + beta_1 * sigma-squared_{t-1} Where:
-sigma-squared_t is the predicted variance for time t.
-omega is the constant term.
-alpha_1 is the coefficient for the previous period's squared log return (ARCH term).
-r-squared_{t-1} is the squared log return at time t-1.
-beta_1 is the coefficient for the previous period's variance forecast (GARCH term).
-sigma-squared_{t-1} is the predicted variance for time t-1.
+Farmer's Financial Shield combines multiple machine learning models to analyze market conditions and provide actionable **Hedge/Wait** recommendations. The system integrates price volatility analysis, trend prediction, sentiment analysis, and advanced classification to help farmers make informed hedging decisions.
 
+### Key Features
 
-How to run:
-Step 1) Install requirements: pip install pandas numpy arch tensorflow scikit-learn transformers torch xgboost tf-keras
-Step 2) Generate Data: Run the data generation script first:
+- **Multi-Model Architecture**: Combines four specialized ML models for comprehensive market analysis
+- **Real-Time Analysis**: Processes market data, trends, and sentiment simultaneously
+- **Risk Management**: Focuses on protecting farmers from adverse price movements
+- **Interpretable Decisions**: Provides clear Hedge/Wait recommendations with confidence scores
+
+## 🏗️ System Architecture
+
+The system employs a hierarchical ensemble approach with four complementary models:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    INPUT DATA LAYER                         │
+│  Historical Prices │ Market Trends │ News/Text Data         │
+└────────────┬────────────────┬──────────────┬───────────────┘
+             │                │              │
+       ┌─────▼─────┐   ┌─────▼─────┐  ┌────▼─────┐
+       │   GARCH   │   │   LSTM    │  │   BERT   │
+       │ Volatility│   │   Trend   │  │Sentiment │
+       │  Model    │   │Prediction │  │ Analysis │
+       └─────┬─────┘   └─────┬─────┘  └────┬─────┘
+             │                │              │
+             └────────────────┼──────────────┘
+                              │
+                      ┌───────▼────────┐
+                      │   XGBoost      │
+                      │   Master       │
+                      │  Classifier    │
+                      └───────┬────────┘
+                              │
+                      ┌───────▼────────┐
+                      │ HEDGE or WAIT  │
+                      │  Recommendation│
+                      └────────────────┘
+```
+
+### Model Components
+
+#### 1. **GARCH Model** (`garch_volatility.py`)
+Predicts price volatility using the GARCH(1,1) specification.
+
+**Mathematical Foundation:**
+
+Logarithmic Return:
+```
+r_t = ln(P_t / P_{t-1})
+```
+
+GARCH(1,1) Variance Forecast:
+```
+σ²_t = ω + α₁·r²_{t-1} + β₁·σ²_{t-1}
+```
+
+Where:
+- `σ²_t`: Predicted variance for time t
+- `ω`: Constant term
+- `α₁`: ARCH coefficient (previous squared return impact)
+- `r²_{t-1}`: Squared log return at t-1
+- `β₁`: GARCH coefficient (previous variance persistence)
+- `σ²_{t-1}`: Previous variance forecast
+
+**Purpose**: Captures volatility clustering and heteroskedasticity in price data
+
+#### 2. **LSTM Model** (`lstm_trend_corrected.py`)
+Predicts market trend direction using Long Short-Term Memory neural networks.
+
+**Purpose**: Captures temporal dependencies and sequential patterns in price movements
+
+#### 3. **BERT Model** (`bert_sentiment_no_comments.py`)
+Analyzes sentiment from market news and textual data using transformer-based NLP.
+
+**Purpose**: Quantifies market sentiment and qualitative factors affecting prices
+
+#### 4. **XGBoost Classifier** (`xgboost_classifier_no_comments.py`)
+Master decision model that combines outputs from all models with additional features.
+
+**Purpose**: Integrates all signals to produce final Hedge/Wait recommendation
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Python 3.8 or higher
+- pip package manager
+- Internet connection (for initial BERT model download)
+
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd farmers-financial-shield
+```
+
+2. **Install dependencies**
+```bash
+pip install pandas numpy arch tensorflow scikit-learn transformers torch xgboost tf-keras
+```
+
+Or using the requirements file:
+```bash
+pip install -r requirements.txt
+```
+
+### Usage
+
+#### Step 1: Generate Synthetic Data
+
+Generate the synthetic dataset for model training and testing:
+
+```bash
 python generate_synthetic_data.py
-Step 3) Run Individual Models (Optional): You can run the GARCH, LSTM, and BERT scripts individually to see their outputs:
+```
+
+This creates sample price data, market indicators, and text data for demonstration purposes.
+
+#### Step 2: Run Individual Models (Optional)
+
+Test each model independently to understand their outputs:
+
+```bash
+# Test volatility prediction
 python garch_volatility.py
+
+# Test trend prediction
 python lstm_trend_corrected.py
-python bert_sentiment.py (The BERT script will download a model on first run - requires internet).
-Step 5) Run Final Classifier: Execute the XGBoost script to see the combined logic and final prediction:
-python xgboost_classifier.py
 
+# Test sentiment analysis (downloads model on first run)
+python bert_sentiment_no_comments.py
+```
 
-Note: Data is kept synthetic as of now, as the APIs are paid and to pretect privacy and data security.
+#### Step 3: Generate Final Recommendations
 
+Run the master classifier to see integrated analysis and recommendations:
+
+```bash
+python xgboost_classifier_no_comments.py
+```
+
+**Expected Output:**
+- Feature importance rankings
+- Model confidence scores
+- Final Hedge/Wait recommendation
+- Decision rationale
+
+## 📊 Data Requirements
+
+The system currently uses **synthetic data** for the following reasons:
+
+- ✅ **Privacy Protection**: No exposure of real farmer or market data
+- ✅ **Security**: Prevents unauthorized access to sensitive information
+- ✅ **Cost Management**: Market data APIs require paid subscriptions
+- ✅ **Development Flexibility**: Easy testing and iteration
+
+### Production Deployment
+
+For production use, integrate real data sources:
+
+- Historical oilseed prices (Mustard, Groundnut, Soybean, etc.)
+- Market indicators (supply/demand, MSP, international prices)
+- News feeds and market commentary
+- Weather data and seasonal patterns
+
+## 🔧 Configuration
+
+Model parameters can be adjusted in individual script files:
+
+- **GARCH**: p=1, q=1 (ARCH and GARCH orders)
+- **LSTM**: Sequence length, hidden units, epochs
+- **BERT**: Pre-trained model selection, max sequence length
+- **XGBoost**: Tree depth, learning rate, number of estimators
+
+## 📈 Model Performance
+
+Each model contributes specific insights:
+
+| Model | Primary Output | Use Case |
+|-------|---------------|----------|
+| GARCH | Volatility Score | Risk assessment |
+| LSTM | Trend Direction | Price movement prediction |
+| BERT | Sentiment Score | Market mood analysis |
+| XGBoost | Final Decision | Integrated recommendation |
+
+## 🎯 Interpretation Guide
+
+### Recommendation Types
+
+**HEDGE** - Recommended when:
+- High volatility predicted
+- Downward trend detected
+- Negative market sentiment
+- Combined signals indicate price risk
+
+**WAIT** - Recommended when:
+- Low volatility environment
+- Upward or stable trend
+- Positive market sentiment
+- Limited downside risk identified
